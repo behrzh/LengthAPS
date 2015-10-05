@@ -189,10 +189,10 @@ def count_table_words(tex_lines, table_line):
         if r'\\' in line:
             count += 1
     if two_column:
-        print('Two-column table with %d lines' % count)
+        print(u'Two-column table with {0:d} lines'.format(count))
         return int(13. * count + 26.)
     else:
-        print('Single-column table with %d lines' % count)
+        print(u'Single-column table with {0:d} lines'.format(count))
         return int(6.5 * count + 13.)
 
 
@@ -200,7 +200,7 @@ def count_tables_words(tex_lines):
     table_lines = find_table_lines(tex_lines)
     table_words = [count_table_words(tex_lines, table_line) for table_line in
                    table_lines]
-    print('Tables: %r' % table_words)
+    print(u'Tables: {0!r:s}'.format(table_words))
     return sum(table_words)
 
 
@@ -304,7 +304,7 @@ def count_chars_abstract(tex_lines):
 
 
 def process_tex(tex_file, args):
-    print('Processing TeX file: %s\n' % tex_file)
+    print(u'Processing TeX file: {0:s}\n'.format(tex_file))
     detex = subprocess.Popen(['detex', '-e', args.env, tex_file],
                              stdout=subprocess.PIPE)
     detex_out = detex.communicate()[0]
@@ -314,7 +314,7 @@ def process_tex(tex_file, args):
         tex_lines = f.readlines()
 
     abstract_chars = count_chars_abstract(tex_lines)
-    print('Abstract:    %6d chars (max 600)' % abstract_chars)
+    print(u'Abstract:    {0:6d} chars (max 600)'.format(abstract_chars))
 
     print('method = ' + args.method)
     if args.method == 'detex':
@@ -323,34 +323,34 @@ def process_tex(tex_file, args):
         main_text_words = count_main_text_words_wordcount(tex_lines, args)
     else:
         raise ValueError('Unsupported method %s' % args.method)
-    print('Main text:      %6d words' % main_text_words)
+    print(u'Main text:      {0:6d} words'.format(main_text_words))
 
     eqn_words = count_equations_words(tex_lines)
-    print('Displayed Math: %6d words' % eqn_words)
+    print(u'Displayed Math: {0:6d} words'.format(eqn_words))
 
     fig_words = count_figures_words(detex_lines, tex_lines, args)
-    print('Figures:        %6d words' % fig_words)
+    print(u'Figures:        {0:6d} words'.format(fig_words))
 
     table_words = count_tables_words(tex_lines)
-    print('Tables:         %6d words' % table_words)
+    print(u'Tables:         {0:6d} words'.format(table_words))
 
     total_words = (main_text_words + eqn_words + fig_words + table_words)
 
-    print('Main text:      %6d words' % main_text_words)
-    print('Displayed Math: %6d words' % eqn_words)
-    print('Figures:        %6d words' % fig_words)
-    print('Tables:         %6d words' % table_words)
-    print('TOTAL:          %6d words' % total_words)
+    print(u'Main text:      {0:6d} words'.format(main_text_words))
+    print(u'Displayed Math: {0:6d} words'.format(eqn_words))
+    print(u'Figures:        {0:6d} words'.format(fig_words))
+    print(u'Tables:         {0:6d} words'.format(table_words))
+    print(u'TOTAL:          {0:6d} words'.format(total_words))
 
     wl = word_limit[args.journal]
     if total_words > wl:
         over_under = 'OVER'
     else:
         over_under = 'UNDER'
-    print('Manuscript %s is currently %d words (%.0f%%) %s limit of %d words '
-          'for journal %s' % (tex_file, abs(total_words - wl),
-                              float(total_words - wl) / wl * 100., over_under,
-                              wl, args.journal))
+    print(u'Manuscript {0:s} is currently {1:d} words ({2:.0f}%) {3:s} limit of {4:d} words '
+          u'for journal {0:s}'.format(tex_file, abs(total_words - wl),
+                                      float(total_words - wl) / wl * 100., over_under,
+                                      wl, args.journal))
 
 
 # _____________________________________________________________________________
