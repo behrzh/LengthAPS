@@ -59,8 +59,9 @@ def count_main_text_words_detex(detex_lines, tex_lines):
 def count_main_text_words_wordcount(tex_lines, args):
     """
     Count words in main text following method described at
-    
     http://journals.aps.org/authors/length-guide-faq
+    :param tex_lines:
+    :param args:
     """
     mod_tex_lines = tex_lines[:]
 
@@ -83,7 +84,6 @@ def count_main_text_words_wordcount(tex_lines, args):
                  r'\acknowle' in line]
     if ack_index:
         mod_tex_lines.insert(ack_index[0], r'\end{document}' + '\n')
-
 
     # Comment out any display equations and acknowledgments
     filterenvs = ['equation', 'eqnarray', 'align', 'displaymath',
@@ -128,6 +128,11 @@ def count_main_text_words_wordcount(tex_lines, args):
 
 
 def find_equation_lines(tex_lines):
+    """
+
+    :param tex_lines:
+    :return:
+    """
     return [i for (i, line) in enumerate(tex_lines) if
             (r'\begin{equation' in line or
              r'\begin{eqnarray' in line or
@@ -136,6 +141,12 @@ def find_equation_lines(tex_lines):
 
 
 def count_equation_words(lines, start_line):
+    """
+
+    :param lines:
+    :param start_line:
+    :return:
+    """
     count = 1
     array = False
     array_lines = 0
@@ -169,6 +180,11 @@ def count_equation_words(lines, start_line):
 
 
 def count_equations_words(tex_lines):
+    """
+
+    :param tex_lines:
+    :return:
+    """
     eqn_line_nos = find_equation_lines(tex_lines)
     eqn_words = [count_equation_words(tex_lines, eqn_line_no) for eqn_line_no in
                  eqn_line_nos]
@@ -177,10 +193,21 @@ def count_equations_words(tex_lines):
 
 
 def find_table_lines(tex_lines):
+    """
+
+    :param tex_lines:
+    :return:
+    """
     return [i for (i, line) in enumerate(tex_lines) if r'\begin{tabl' in line]
 
 
 def count_table_words(tex_lines, table_line):
+    """
+
+    :param tex_lines:
+    :param table_line:
+    :return:
+    """
     two_column = 'table*' in tex_lines[table_line]
     count = 1
     for line in tex_lines[table_line:]:
@@ -197,6 +224,11 @@ def count_table_words(tex_lines, table_line):
 
 
 def count_tables_words(tex_lines):
+    """
+
+    :param tex_lines:
+    :return:
+    """
     table_lines = find_table_lines(tex_lines)
     table_words = [count_table_words(tex_lines, table_line) for table_line in
                    table_lines]
@@ -205,6 +237,13 @@ def count_tables_words(tex_lines):
 
 
 def count_figures_words(detex_lines, tex_lines, opts):
+    """
+
+    :param detex_lines:
+    :param tex_lines:
+    :param opts:
+    :return: :raise ValueError:
+    """
     if opts.var is None:
         tex_vars = {}
     else:
@@ -291,6 +330,11 @@ def count_figures_words(detex_lines, tex_lines, opts):
 
 def count_chars_abstract(tex_lines):
     # print(tex_lines)
+    """
+
+    :param tex_lines:
+    :return:
+    """
     abs_begin_line, = [i for (i, line) in enumerate(tex_lines) if
                        r'\begin{abstract}' in line]
     abs_end_line, = [i for (i, line) in enumerate(tex_lines) if
@@ -304,6 +348,12 @@ def count_chars_abstract(tex_lines):
 
 
 def process_tex(tex_file, args):
+    """
+
+    :param tex_file:
+    :param args:
+    :raise ValueError:
+    """
     print(u'Processing TeX file: {0:s}\n'.format(tex_file))
     detex = subprocess.Popen(['detex', '-e', args.env, tex_file],
                              stdout=subprocess.PIPE)
